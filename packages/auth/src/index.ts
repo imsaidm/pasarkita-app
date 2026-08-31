@@ -24,6 +24,8 @@ export {
   type ForbiddenAction,
 } from './demo';
 
+export { publicUrl } from './http';
+
 export {
   PasswordError,
   assertPasswordAcceptable,

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import {
+  publicUrl,
   DEMO_SESSION_TTL_MS,
   clearCookie,
   createDemoSession,
@@ -19,7 +20,7 @@ export async function GET(request: Request) {
   if (url.searchParams.get('keluar') !== '1') {
     return NextResponse.json({ error: 'Permintaan tidak dikenal.' }, { status: 400 });
   }
-  const response = NextResponse.redirect(new URL('/', request.url), 303);
+  const response = NextResponse.redirect(publicUrl(request, '/'), 303);
   response.headers.set('Set-Cookie', clearCookie());
   return response;
 }
@@ -46,7 +47,7 @@ export async function POST(request: Request) {
   }
 
   const session = createDemoSession('pos');
-  const response = NextResponse.redirect(new URL('/', request.url), 303);
+  const response = NextResponse.redirect(publicUrl(request, '/'), 303);
   response.headers.set(
     'Set-Cookie',
     serializeCookie(issue(session, secret), {
