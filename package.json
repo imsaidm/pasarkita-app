@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "description": "Pasarkita — Store, Pos, dan Dashboard di atas satu skema, satu auth, satu definisi paket.",
   "engines": {
-    "node": ">=22"
+    "node": ">=20"
   },
   "workspaces": [
     "packages/*",
