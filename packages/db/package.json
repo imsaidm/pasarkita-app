@@ -1,0 +1,26 @@
+{
+  "name": "@pasarkita/db",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Skema, migrasi, dan kueri Pasarkita. Stok dan kas sebagai buku besar append-only.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "migrate": "node src/migrate.mjs",
+    "seed-demo": "node src/seed-demo.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@pasarkita/plan": "*",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/pg": "^8.11.10",
+    "typescript": "^5.7.2"
+  }
+}
