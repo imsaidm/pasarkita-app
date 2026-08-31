@@ -1,0 +1,38 @@
+# dependency
+node_modules/
+
+# build
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+
+# environment — jangan pernah commit nilai sebenarnya
+.env
+.env.*
+!.env.example
+
+# kredensial
+*.pem
+*.key
+*.p12
+*.pfx
+secrets.env
+
+# arsip rilis
+*.tar.gz
+
+# test & tooling
+coverage/
+.vitest/
+
+# editor & os
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# log
+*.log
+npm-debug.log*
