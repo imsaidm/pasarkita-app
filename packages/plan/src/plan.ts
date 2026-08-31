@@ -1,6 +1,6 @@
-import { appsFor, hasApp, isChannel, type AppName, type Channel } from './channels.js';
-import { FEATURE_SPECS, isFeature, type Feature } from './features.js';
-import { isTier, limitsFor, nextTier, tierAtLeast, type Limits, type Tier } from './tiers.js';
+import { appsFor, hasApp, isChannel, type AppName, type Channel } from './channels';
+import { FEATURE_SPECS, isFeature, type Feature } from './features';
+import { isTier, limitsFor, nextTier, tierAtLeast, type Limits, type Tier } from './tiers';
 
 /**
  * Satu tenant punya satu paket. Tiga aplikasi membaca paket yang sama,

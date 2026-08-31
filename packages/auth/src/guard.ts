@@ -1,6 +1,6 @@
 import { can, planHasApp, type AppName, type Feature } from '@pasarkita/plan';
-import { DEMO_FORBIDDEN, assertDemoSessionSane, isDemoTenantId, type ForbiddenAction } from './demo.js';
-import type { Session } from './session.js';
+import { DEMO_FORBIDDEN, assertDemoSessionSane, isDemoTenantId, type ForbiddenAction } from './demo';
+import type { Session } from './session';
 
 /**
  * Satu pintu untuk semua keputusan "boleh atau tidak".

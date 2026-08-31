@@ -1,5 +1,5 @@
 import { parsePlan, type Plan } from '@pasarkita/plan';
-import { DbError, query, queryOne, transaction } from './client.js';
+import { DbError, query, queryOne, transaction } from './client';
 
 /**
  * Kueri yang dipakai ketiga aplikasi.

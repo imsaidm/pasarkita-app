@@ -1,0 +1,10 @@
+{
+  "name": "@pasarkita/ui",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Gaya bersama Store, Pos, dan Dashboard.",
+  "exports": {
+    "./styles.css": "./src/styles.css"
+  }
+}

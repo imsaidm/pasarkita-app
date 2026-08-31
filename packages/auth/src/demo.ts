@@ -1,5 +1,5 @@
 import { parsePlan, type Plan } from '@pasarkita/plan';
-import type { Session } from './session.js';
+import type { Session } from './session';
 
 /**
  * Sesi demo: pengunjung menekan satu tombol, langsung masuk, tanpa mengisi

@@ -9,7 +9,7 @@ export {
   type Role,
   type Session,
   type SessionKind,
-} from './session.js';
+} from './session';
 
 export {
   DEMO_FORBIDDEN,
@@ -22,7 +22,22 @@ export {
   demoTenantIdFor,
   isDemoTenantId,
   type ForbiddenAction,
-} from './demo.js';
+} from './demo';
+
+export {
+  PasswordError,
+  assertPasswordAcceptable,
+  hashPassword,
+  verifyPassword,
+} from './password';
+
+export {
+  COOKIE_NAME,
+  clearCookie,
+  readSession,
+  serializeCookie,
+  type CookieOptions,
+} from './cookie';
 
 export {
   ForbiddenError,
@@ -34,4 +49,4 @@ export {
   guard,
   isForbiddenForDemo,
   type GuardInput,
-} from './guard.js';
+} from './guard';

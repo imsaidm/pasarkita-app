@@ -7,7 +7,7 @@ export {
   isChannel,
   type AppName,
   type Channel,
-} from './channels.js';
+} from './channels';
 
 export {
   ALWAYS_ON,
@@ -16,7 +16,7 @@ export {
   isFeature,
   type AlwaysOnFeature,
   type Feature,
-} from './features.js';
+} from './features';
 
 export {
   TIER_LABELS,
@@ -27,7 +27,7 @@ export {
   tierAtLeast,
   type Limits,
   type Tier,
-} from './tiers.js';
+} from './tiers';
 
 export {
   InvalidPlanError,
@@ -44,4 +44,4 @@ export {
   planHasApp,
   upgradeTargetFor,
   type Plan,
-} from './plan.js';
+} from './plan';

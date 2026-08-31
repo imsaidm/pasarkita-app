@@ -1,0 +1,161 @@
+/* Gaya bersama untuk Store, Pos, dan Dashboard.
+   Satu berkas supaya ketiganya terlihat seperti satu produk. */
+
+:root {
+  --ground: #fbfaf7;
+  --surface: #ffffff;
+  --surface-2: #f1efea;
+  --ink: #141312;
+  --muted: #6e6a63;
+  --rule: #e0ddd6;
+  --accent: #1d6e5b;
+  --accent-sf: #e4efea;
+  --accent-ink: #ffffff;
+  --warn: #b9382a;
+  --warn-sf: #fbeae7;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ground: #131211;
+    --surface: #1c1b18;
+    --surface-2: #262420;
+    --ink: #ece9e3;
+    --muted: #9b968d;
+    --rule: #322f2a;
+    --accent: #57b899;
+    --accent-sf: #17332c;
+    --accent-ink: #0d1614;
+    --warn: #e0806e;
+    --warn-sf: #2e1d19;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 16.5px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+.shell { max-width: 64rem; margin: 0 auto; padding: 0 1.2rem 4rem; }
+
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
+  padding: 1.4rem 0;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 2rem;
+}
+.brand { font-weight: 700; letter-spacing: -0.02em; font-size: 1.05rem; }
+.brand span { color: var(--accent); }
+.topbar nav { margin-left: auto; display: flex; gap: 1rem; font-size: 0.9rem; }
+.topbar nav a { color: var(--muted); text-decoration: none; }
+.topbar nav a:hover { color: var(--accent); }
+
+h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); line-height: 1.1; letter-spacing: -0.03em; margin: 0 0 0.6rem; text-wrap: balance; }
+h2 { font-size: 1.25rem; letter-spacing: -0.02em; margin: 2.2rem 0 0.8rem; }
+p { margin: 0 0 0.9rem; max-width: 34rem; }
+.muted { color: var(--muted); }
+.small { font-size: 0.88rem; }
+
+.btn {
+  display: inline-block;
+  padding: 0.65rem 1.2rem;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.94rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn:hover { border-color: var(--accent); }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  padding: 0.7rem 1rem;
+  background: var(--accent-sf);
+  border: 1px solid var(--accent);
+  color: var(--ink);
+  font-size: 0.88rem;
+  margin-bottom: 1.5rem;
+}
+.banner strong { color: var(--accent); }
+
+.grid { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+@media (min-width: 640px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 860px) { .grid-3 { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 640px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 960px) { .grid-4 { grid-template-columns: repeat(4, 1fr); } }
+
+.cell { background: var(--surface); padding: 1rem 1.1rem; }
+.cell h3 { margin: 0 0 0.2rem; font-size: 1rem; }
+.cell p { margin: 0; font-size: 0.88rem; }
+
+.stat .label { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.stat .value { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-top: 0.2rem; }
+
+.card-btn {
+  background: var(--surface);
+  border: none;
+  border-radius: 0;
+  padding: 0.9rem 1rem;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  color: var(--ink);
+  display: block;
+  width: 100%;
+}
+.card-btn:hover:not(:disabled) { background: var(--accent-sf); }
+.card-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.card-btn .nm { font-weight: 600; font-size: 0.94rem; }
+.card-btn .pr { color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums; font-size: 0.9rem; margin-top: 0.15rem; }
+.card-btn .st { color: var(--muted); font-size: 0.78rem; }
+
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--rule); background: var(--surface); }
+th, td { text-align: left; padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--rule); }
+thead th { background: var(--surface-2); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+tbody tr:last-child td { border-bottom: none; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+.locked { color: var(--muted); }
+.locked::before { content: "\1F512\00a0"; font-size: 0.8em; }
+.open::before { content: "\2713\00a0"; color: var(--accent); font-weight: 700; }
+
+.notice { border: 1px solid var(--rule); border-left: 3px solid var(--warn); background: var(--warn-sf); padding: 0.9rem 1rem; font-size: 0.9rem; }
+
+form.stack { display: grid; gap: 0.8rem; max-width: 22rem; }
+label { display: grid; gap: 0.25rem; font-size: 0.85rem; color: var(--muted); }
+input {
+  font: inherit;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  color: var(--ink);
+  border-radius: 2px;
+}
+input:focus-visible, .btn:focus-visible, .card-btn:focus-visible, a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+footer { margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); color: var(--muted); font-size: 0.82rem; }
+
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }

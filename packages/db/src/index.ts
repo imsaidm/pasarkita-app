@@ -6,7 +6,7 @@ export {
   queryOne,
   transaction,
   type Row,
-} from './client.js';
+} from './client';
 
 export {
   countSkus,
@@ -14,4 +14,4 @@ export {
   loadTenantPlan,
   recordSale,
   type CatalogItem,
-} from './queries.js';
+} from './queries';

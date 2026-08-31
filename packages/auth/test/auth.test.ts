@@ -13,7 +13,7 @@ import {
   readSecret,
   verify,
   type Session,
-} from '../src/index.js';
+} from '../src/index';
 
 const SECRET = 'rahasia-uji-yang-panjangnya-lebih-dari-tiga-puluh-dua-karakter';
 

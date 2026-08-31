@@ -17,7 +17,7 @@ import {
   planHasApp,
   upgradeTargetFor,
   type Feature,
-} from '../src/index.js';
+} from '../src/index';
 
 describe('parsePlan', () => {
   it('menerima kombinasi yang sah', () => {

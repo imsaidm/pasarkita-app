@@ -1,5 +1,5 @@
-import { CHANNELS, type Channel } from './channels.js';
-import type { Tier } from './tiers.js';
+import { CHANNELS, type Channel } from './channels';
+import type { Tier } from './tiers';
 
 /**
  * Katalog fitur yang bisa dikunci paket.
