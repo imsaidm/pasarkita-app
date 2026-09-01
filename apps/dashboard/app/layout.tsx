@@ -1,5 +1,10 @@
 import type { Metadata } from 'next';
-import '@pasarkita/ui/styles.css';
+import { Inter } from 'next/font/google';
+import './globals.css';
+
+// Variabel font dipasang di <html>. Kalau className ini lupa dipasang,
+// seluruh app diam-diam jatuh ke system-ui tanpa satu pun error.
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
 
 export const metadata: Metadata = {
   title: 'Kelola Toko Pasarkita',
@@ -8,24 +13,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id">
-      <body>
-        <div className="shell">
-          <header className="topbar">
-            <span className="brand">
-              Pasarkita <span>Kelola Toko</span>
-            </span>
-            <nav>
-              <a href="https://pasarkita.net">Beranda</a>
-              <a href="https://store.pasarkita.net">Toko</a>
-              <a href="https://pos.pasarkita.net">Kasir</a>
-              <a href="https://dashboard.pasarkita.net">Kelola</a>
-            </nav>
-          </header>
-          <main>{children}</main>
-          <footer>Pasarkita &mdash; pasarkita.net</footer>
-        </div>
-      </body>
+    <html lang="id" className={inter.variable}>
+      <body>{children}</body>
     </html>
   );
 }

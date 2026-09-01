@@ -1,0 +1,135 @@
+@import "tailwindcss";
+
+/* ============================================================
+   SISTEM DESAIN PASARKITA
+   ============================================================
+   Diambil dari sistem desain Karyalo yang sudah dipakai
+   karyalo-storefront-pwa dan karyalo-manage-pwa, supaya Store,
+   Dashboard, dan Kasir terlihat sebagai satu produk.
+
+   Nilai warna sengaja dipertahankan persis. Nama token juga —
+   komponen yang dipindah dari kedua repo itu memakai kelas
+   `bg-deep-pine`, `text-karyalo-green`, dan sejenisnya, jadi
+   mengganti nama token berarti memutus komponen tanpa ketahuan.
+
+   Bacanya sebagai slot, bukan warna literal:
+     deep-pine     = navy brand, paling gelap
+     karyalo-green = royal blue, warna utama CTA dan tautan
+     accent-cyan   = aksen paling terang, HANYA dekoratif
+   ============================================================ */
+
+@theme {
+  /* --- Warna brand --- */
+  --color-deep-pine: #1e2f5c;
+  --color-karyalo-green: #1e5aa8;
+  --color-accent-cyan: #2fc1d6;
+
+  /* --- Teks --- */
+  --color-ink: #1c2430;
+  --color-muted: #5b6472;
+
+  /* --- Permukaan --- */
+  --color-warm-white: #fcfbf7;
+  --color-soft-sand: #f4f1ea;
+  --color-soft-sage: #e8f1fa;
+  --color-border: #dce2ea;
+
+  /* --- Aksen hangat, pasangan komplemen biru brand --- */
+  --color-terracotta: #a5482d;
+  --color-terracotta-soft: #f2d9c8;
+
+  /* --- Warna makna, khusus kasir dan status --- */
+  --color-success: #1a7f5a;
+  --color-success-soft: #e3f3ec;
+  --color-warning: #a5702d;
+  --color-warning-soft: #f7eddc;
+  --color-danger: #a5482d;
+  --color-danger-soft: #f7e5df;
+
+  /* Alias status. Komponen yang dipindah dari panel Kelola memakai
+     `bg-status-critical`, `text-status-warning`, dan sejenisnya di sekitar
+     seratus tempat. Menambah alias jauh lebih aman daripada mengganti nama
+     kelas satu per satu di seluruh berkas. */
+  --color-status-critical: #b3261e;
+  --color-status-warning: #a5482d;
+  --color-status-info: #1e5aa8;
+  --color-status-success: #1c7a4d;
+
+  /* --- Tipografi --- */
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  /* Layar kasir paling padat angka; monospace dipakai untuk kolom yang
+     harus benar-benar rata. */
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* --- Layout --- */
+  --container-content: 1240px;
+  --container-wide: 1440px;
+  --radius-card: 18px;
+
+  /* Target sentuh kasir. Dipakai sambil berdiri, satu tangan, sering
+     dengan layar sentuh — 44px itu batas bawah yang masih bisa ditekan
+     tanpa meleset, bukan angka estetika. */
+  --spacing-touch: 44px;
+  --spacing-touch-lg: 56px;
+}
+
+html body {
+  background-color: var(--color-warm-white);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+@media (min-width: 768px) {
+  body {
+    font-size: 17px;
+  }
+}
+
+/* Fokus harus terlihat jelas, bukan perubahan warna samar. */
+:focus-visible {
+  outline: 2px solid var(--color-karyalo-green);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Angka yang berjajar — harga, stok, kembalian — harus rata lebarnya
+   supaya kolomnya tidak bergoyang saat nilainya berubah. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Target sentuh.
+   Catatan: di repo asal, komponen memakai kelas `tap-target` di puluhan
+   tempat sementara stylesheet-nya hanya mendefinisikan `.touch-target` —
+   jadi aturan 44px itu tidak pernah benar-benar berlaku di sana. Kedua nama
+   didefinisikan di sini supaya komponen yang dipindah langsung benar. */
+.tap-target,
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Kasir dipakai sambil berdiri, sering satu tangan, kadang buru-buru.
+   Targetnya lebih besar dari standar karena salah tekan di kasir berarti
+   transaksi salah, bukan sekadar salah navigasi. */
+.tap-target-pos {
+  min-height: 56px;
+  min-width: 56px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

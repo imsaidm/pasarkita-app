@@ -1,0 +1,12 @@
+@import "@pasarkita/ui/theme.css";
+
+/* WAJIB. Blok @theme tinggal di packages/ui, jadi pemindaian sumber otomatis
+   Tailwind v4 berpangkal di sana — bukan di app ini. Tanpa @source, kelas yang
+   hanya dipakai di app ini tidak pernah dihasilkan, dan itu terjadi TANPA
+   pesan error: halamannya cuma tampil tanpa gaya. */
+@source "../app";
+@source "../components";
+@source "../lib";
+html body {
+  background-color: var(--color-warm-white);
+}
