@@ -159,3 +159,54 @@ input:focus-visible, .btn:focus-visible, .card-btn:focus-visible, a:focus-visibl
 footer { margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); color: var(--muted); font-size: 0.82rem; }
 
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* ---------- kasir ---------- */
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+.statusline {
+  display: flex; align-items: center; gap: 0.5rem;
+  margin-bottom: 1rem; color: var(--muted);
+}
+.dot-on, .dot-off {
+  width: 0.55rem; height: 0.55rem; border-radius: 50%; flex: none;
+}
+.dot-on { background: var(--accent); }
+.dot-off { background: var(--warn); }
+
+.searchbox { display: block; margin-bottom: 1rem; }
+.searchbox input { width: 100%; max-width: 26rem; }
+
+.panel {
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  padding: 1.2rem 1.2rem 1.3rem;
+  margin-top: 1.5rem;
+  display: grid;
+  gap: 0.9rem;
+}
+.panel > h2 { margin-bottom: 0; }
+
+.panel-row {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 1rem; padding-top: 0.6rem; border-top: 1px solid var(--rule);
+}
+.panel-row .label {
+  font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+}
+.total, .change {
+  font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.change { color: var(--accent); }
+
+.methods, .quick, .actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.actions { justify-content: flex-end; }
+
+.qty { display: inline-flex; align-items: center; gap: 0.5rem; }
+.qty span { min-width: 1.5rem; text-align: center; font-variant-numeric: tabular-nums; }
+
+.btn.small { padding: 0.3rem 0.6rem; font-size: 0.82rem; }

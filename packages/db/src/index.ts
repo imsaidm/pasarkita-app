@@ -15,3 +15,15 @@ export {
   recordSale,
   type CatalogItem,
 } from './queries';
+
+export {
+  closeShift,
+  findOpenShift,
+  openShift,
+  recordPosSale,
+  summariseShift,
+  type SaleInput,
+  type SaleResult,
+  type Shift,
+  type ShiftSummary,
+} from './pos';
