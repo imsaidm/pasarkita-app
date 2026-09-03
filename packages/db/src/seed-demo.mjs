@@ -16,17 +16,37 @@ const DEMO_TENANTS = [
   { id: 'demo_store', name: 'Toko Demo', channel: 'omni', tier: 'middle' },
 ];
 
+/**
+ * Katalog contoh.
+ *
+ * Nama berkas foto sengaja diturunkan dari nama produk (slug), dan berkasnya
+ * memang ada di `apps/store/public/images/products/`. Katalog contoh yang
+ * fotonya tidak ada membuat toko demo terlihat rusak — dan itu hal pertama
+ * yang dilihat orang.
+ */
 const CATALOG = [
-  { name: 'Kopi Susu Gula Aren', category: 'Minuman', price: 18_000, stock: 40 },
-  { name: 'Americano', category: 'Minuman', price: 15_000, stock: 35 },
-  { name: 'Teh Tarik', category: 'Minuman', price: 14_000, stock: 30 },
-  { name: 'Air Mineral 600ml', category: 'Minuman', price: 5_000, stock: 120 },
-  { name: 'Roti Bakar Coklat', category: 'Makanan', price: 20_000, stock: 25 },
-  { name: 'Pisang Goreng', category: 'Makanan', price: 12_000, stock: 40 },
-  { name: 'Nasi Goreng Spesial', category: 'Makanan', price: 28_000, stock: 20 },
-  { name: 'Mie Goreng', category: 'Makanan', price: 25_000, stock: 20 },
-  { name: 'Keripik Singkong', category: 'Camilan', price: 10_000, stock: 60 },
-  { name: 'Kacang Telur', category: 'Camilan', price: 8_000, stock: 50 },
+  { name: 'Blouse Linen Wanita — Krem', category: 'Wanita', price: 189_000, stock: 24, ringkas: 'Blouse linen ringan, adem dipakai harian.' },
+  { name: 'Dress Midi Rayon — Navy', category: 'Wanita', price: 259_000, stock: 15, ringkas: 'Dress midi rayon jatuh, cocok untuk acara santai.' },
+  { name: 'Outer Cardigan Wanita — Sage', category: 'Wanita', price: 219_000, stock: 18, ringkas: 'Cardigan rajut halus, hangat tanpa gerah.' },
+  { name: 'Rok Plisket Wanita — Hitam', category: 'Wanita', price: 175_000, stock: 22, ringkas: 'Rok plisket jatuh rapi, mudah dipadukan.' },
+
+  { name: 'Kemeja Katun Pria — Putih', category: 'Pria', price: 199_000, stock: 30, ringkas: 'Kemeja katun rapi untuk kerja dan acara formal.' },
+  { name: 'Kaos Polos Pria — Navy', category: 'Pria', price: 89_000, stock: 60, ringkas: 'Kaos katun combed, potongan reguler.' },
+  { name: 'Celana Chino Pria — Khaki', category: 'Pria', price: 249_000, stock: 20, ringkas: 'Chino bahan twill, tidak mudah kusut.' },
+  { name: 'Jaket Denim Pria — Biru', category: 'Pria', price: 349_000, stock: 12, ringkas: 'Jaket denim klasik, makin bagus makin sering dipakai.' },
+
+  { name: 'Sneakers Canvas — Putih', category: 'Sepatu', price: 299_000, stock: 25, ringkas: 'Sneakers kanvas ringan untuk harian.' },
+  { name: 'Flat Shoes Wanita — Hitam', category: 'Sepatu', price: 229_000, stock: 20, ringkas: 'Flat shoes empuk, nyaman dipakai seharian.' },
+  { name: 'Boots Chelsea — Cokelat', category: 'Sepatu', price: 459_000, stock: 8, ringkas: 'Chelsea boots kulit sintetis, mudah dilepas pasang.' },
+  { name: 'Sandal Slide — Krem', category: 'Sepatu', price: 119_000, stock: 40, ringkas: 'Sandal slide empuk untuk santai.' },
+
+  { name: 'Tote Bag Kanvas — Natural', category: 'Tas', price: 149_000, stock: 35, ringkas: 'Tote kanvas tebal, muat laptop 14 inci.' },
+  { name: 'Ransel Harian — Navy', category: 'Tas', price: 329_000, stock: 16, ringkas: 'Ransel harian dengan sekat laptop berlapis.' },
+  { name: 'Sling Bag Mini — Terracotta', category: 'Tas', price: 139_000, stock: 28, ringkas: 'Sling bag ringkas untuk barang seperlunya.' },
+
+  { name: 'Jam Tangan Minimalis — Navy', category: 'Aksesoris', price: 399_000, stock: 10, ringkas: 'Jam tangan bermuka bersih, tali kulit.' },
+  { name: 'Kacamata Hitam Bulat', category: 'Aksesoris', price: 159_000, stock: 24, ringkas: 'Kacamata hitam bingkai bulat dengan lensa UV400.' },
+  { name: 'Scarf Motif Earth Tone', category: 'Aksesoris', price: 99_000, stock: 30, ringkas: 'Scarf bermotif hangat, bahan jatuh dan lembut.' },
 ];
 
 function readDatabaseUrl() {
@@ -107,10 +127,30 @@ async function seedTenant(client, tenant) {
     // Slug wajib sejak migrasi 003 — setiap rute toko online dialamati
     // dengannya. Indeks unik per tenant, dan katalog contoh tidak punya nama
     // kembar, jadi tidak perlu pembeda urutan di sini.
+    const slug = slugify(item.name);
     await client.query(
-      'INSERT INTO product (id, tenant_id, name, category, slug) VALUES ($1, $2, $3, $4, $5)',
-      [productId, tenant.id, item.name, item.category, slugify(item.name)],
+      `INSERT INTO product (id, tenant_id, name, category, slug, short_description, description)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [
+        productId,
+        tenant.id,
+        item.name,
+        item.category,
+        slug,
+        item.ringkas ?? '',
+        item.ringkas ?? '',
+      ],
     );
+
+    // Dua foto per produk, urutan menentukan mana yang tampil di kartu.
+    // Nama berkasnya mengikuti slug; kalau slug berubah, fotonya ikut hilang.
+    for (const [index, suffix] of ['', '-2'].entries()) {
+      await client.query(
+        `INSERT INTO product_image (tenant_id, product_id, url, sort)
+         VALUES ($1, $2, $3, $4)`,
+        [tenant.id, productId, `/images/products/product-${slug}${suffix}.jpg`, index],
+      );
+    }
     await client.query('INSERT INTO variant (id, product_id) VALUES ($1, $2)', [
       variantId,
       productId,

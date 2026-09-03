@@ -151,7 +151,13 @@ FAIL=0
 for entry in "${APPS[@]}"; do
   app="${entry%%:*}"; port="${entry##*:}"
   code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 10 "http://127.0.0.1:$port/" 2>/dev/null)"
-  if [ "$code" = "200" ]; then ok "$app ($port) -> 200"; else printf '  [GAGAL] %s (%s) -> %s\n' "$app" "$port" "${code:-mati}"; FAIL=1; fi
+  # Dashboard berada di balik login: tanpa sesi ia MENGALIHKAN, dan itu
+  # jawaban yang benar. Memaksa 200 di sini membuat deploy yang sehat
+  # dilaporkan gagal — persis yang terjadi pada rilis b62c80c.
+  case "$code" in
+    200|301|302|303|307|308) ok "$app ($port) -> $code" ;;
+    *) printf '  [GAGAL] %s (%s) -> %s\n' "$app" "$port" "${code:-mati}"; FAIL=1 ;;
+  esac
 done
 
 # Penanda khas rilis ini: kotak pencarian kasir hanya ada di versi baru.
