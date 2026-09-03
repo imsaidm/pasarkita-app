@@ -85,6 +85,13 @@ ok "secrets dimuat"
 step "MIGRASI"
 node packages/db/src/migrate.mjs || die "migrasi gagal"
 
+# Tenant demo diisi ulang setiap rilis. Isinya memang data palsu yang boleh
+# dibuang, dan tanpa ini katalog contoh tertinggal di bentuk lama setiap kali
+# skema atau daftar produknya berubah — persis yang terjadi ketika foto
+# produk ditambahkan tapi tabelnya tetap kosong.
+step "ISI ULANG TENANT DEMO"
+node packages/db/src/seed-demo.mjs || die "seed demo gagal"
+
 # ---------------------------------------------------------------- build
 
 step "BUILD (2-3 menit)"

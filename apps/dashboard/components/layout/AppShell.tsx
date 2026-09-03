@@ -1,15 +1,14 @@
 "use client";
 
-import { useEffect } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useSession, CapabilitySet } from "@/lib/auth/session-context";
 import { TopBar } from "@/components/layout/TopBar";
 import { DesktopSideNavigation } from "@/components/layout/DesktopSideNavigation";
 import { MobileBottomNavigation } from "@/components/layout/MobileBottomNavigation";
 import { ConnectivityBanner } from "@/components/layout/ConnectivityBanner";
 import { ServiceWorkerRegister } from "@/components/system/ServiceWorkerRegister";
-import { Loader2, ShieldAlert, ArrowLeft } from "lucide-react";
+import { ShieldAlert, ArrowLeft } from "lucide-react";
 
 const ROUTE_CAPABILITIES: { prefix: string; capability: keyof CapabilitySet; label: string }[] = [
   { prefix: "/storefront", capability: "cmsWrite", label: "Storefront CMS & Tema" },
@@ -27,22 +26,15 @@ const ROUTE_CAPABILITIES: { prefix: string; capability: keyof CapabilitySet; lab
 const HALAMAN_TANPA_SHELL = ["/login"];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
+  // Semua hook dipanggil lebih dulu, tanpa syarat. Keluar lebih awal di
+  // atas hook membuat urutannya berubah antar render, dan React tidak bisa
+  // mencocokkan state — itu salah satu penyebab tampilan berkedip.
   const pathname = usePathname();
-  if (HALAMAN_TANPA_SHELL.includes(pathname)) return <>{children}</>;
-  const router = useRouter();
-  const { isAuthenticated, hydrated, capabilities, role } = useSession();
+  const { capabilities, role } = useSession();
 
-  const isLoginPage = pathname === "/login";
+  const isLoginPage = HALAMAN_TANPA_SHELL.includes(pathname);
 
-  useEffect(() => {
-    if (!hydrated) return;
-    // Jika belum login dan bukan di halaman login -> arahkan ke /login
-    if (!isAuthenticated && !isLoginPage) {
-      router.replace("/login");
-    }
-  }, [isAuthenticated, isLoginPage, hydrated, router]);
-
-  // Halaman Login: Render penuh tanpa sidebar & navigasi admin
+  // Halaman masuk: tanpa sidebar dan navigasi admin.
   if (isLoginPage) {
     return (
       <main id="main-content" className="min-h-screen w-full bg-soft-sand/30">
@@ -52,15 +44,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // Jika belum ter-hidrasi atau belum autentikasi saat mengakses halaman terproteksi
-  if (!hydrated || !isAuthenticated) {
-    return (
-      <div className="flex min-h-screen w-full flex-col items-center justify-center gap-3 bg-soft-sand/30 p-6 text-center">
-        <Loader2 size={28} className="animate-spin text-deep-pine" aria-hidden="true" />
-        <p className="text-xs font-medium text-muted">Memverifikasi sesi login...</p>
-      </div>
-    );
-  }
+  // TIDAK ADA pemeriksaan sesi di sini.
+  //
+  // Versi sebelumnya membaca localStorage lalu mengalihkan sendiri ke /login
+  // kalau merasa belum masuk. Sesi kita ada di cookie bertanda tangan, bukan
+  // localStorage, jadi klien selalu menyimpulkan "belum masuk" lalu
+  // mengalihkan, middleware melihat cookie yang sah dan memantulkan kembali,
+  // dan seterusnya — itu kedipan yang terlihat.
+  //
+  // Yang menjaga halaman ini adalah middleware ditambah resolveTenantId() di
+  // sisi server. Kalau render sampai ke sini, sesinya sudah diverifikasi.
 
   // Periksa apakah rute saat ini membutuhkan capability yang tidak dimiliki oleh role aktif
   const restrictedRoute = ROUTE_CAPABILITIES.find(
