@@ -35,6 +35,15 @@ function readDatabaseUrl() {
   return url;
 }
 
+/** Harus menghasilkan slug yang identik dengan migrasi 003 dan storefront.ts. */
+function slugify(value) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 function assertDemo(tenantId) {
   if (!tenantId.startsWith('demo_')) {
     throw new Error(
@@ -95,9 +104,12 @@ async function seedTenant(client, tenant) {
     const variantId = `${tenant.id}_v${index}`;
     const skuId = `${tenant.id}_s${index}`;
 
+    // Slug wajib sejak migrasi 003 — setiap rute toko online dialamati
+    // dengannya. Indeks unik per tenant, dan katalog contoh tidak punya nama
+    // kembar, jadi tidak perlu pembeda urutan di sini.
     await client.query(
-      'INSERT INTO product (id, tenant_id, name, category) VALUES ($1, $2, $3, $4)',
-      [productId, tenant.id, item.name, item.category],
+      'INSERT INTO product (id, tenant_id, name, category, slug) VALUES ($1, $2, $3, $4, $5)',
+      [productId, tenant.id, item.name, item.category, slugify(item.name)],
     );
     await client.query('INSERT INTO variant (id, product_id) VALUES ($1, $2)', [
       variantId,

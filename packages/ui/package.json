@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Gaya bersama Store, Pos, dan Dashboard.",
+  "description": "Sistem desain bersama Store, Pos, dan Dashboard.",
   "exports": {
+    "./theme.css": "./src/theme.css",
     "./styles.css": "./src/styles.css"
   }
 }

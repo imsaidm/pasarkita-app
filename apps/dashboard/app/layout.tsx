@@ -1,31 +1,44 @@
-import type { Metadata } from 'next';
-import '@pasarkita/ui/styles.css';
+import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+
+import { SessionProvider } from "@/lib/auth/session-context";
+import { AppShell } from "@/components/layout/AppShell";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: 'Kelola Toko Pasarkita',
-  description: 'Kelola produk, stok, pesanan, dan keuangan toko Anda.',
+  title: {
+    default: "Kelola Toko Pasarkita",
+    template: "%s — Pasarkita",
+  },
+  description:
+    "Kelola pesanan, produk, stok, pelanggan, dan keuangan toko Anda.",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/icons/icon-192.png",
+    apple: "/icons/icon-192.png",
+  },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export const viewport: Viewport = {
+  themeColor: "#1E2F5C",
+  width: "device-width",
+  initialScale: 1,
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="id">
-      <body>
-        <div className="shell">
-          <header className="topbar">
-            <span className="brand">
-              Pasarkita <span>Kelola Toko</span>
-            </span>
-            <nav>
-              <a href="https://pasarkita.net">Beranda</a>
-              <a href="https://store.pasarkita.net">Toko</a>
-              <a href="https://pos.pasarkita.net">Kasir</a>
-              <a href="https://dashboard.pasarkita.net">Kelola</a>
-            </nav>
-          </header>
-          <main>{children}</main>
-          <footer>Pasarkita &mdash; pasarkita.net</footer>
-        </div>
-      </body>
+    <html lang="id" className={inter.variable}>
+      <body>          <SessionProvider>
+            <AppShell>{children}</AppShell>
+          </SessionProvider>      </body>
     </html>
   );
 }
