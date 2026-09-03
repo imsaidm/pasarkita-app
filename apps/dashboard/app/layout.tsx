@@ -1,20 +1,44 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
+import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
 
-// Variabel font dipasang di <html>. Kalau className ini lupa dipasang,
-// seluruh app diam-diam jatuh ke system-ui tanpa satu pun error.
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
+import { SessionProvider } from "@/lib/auth/session-context";
+import { AppShell } from "@/components/layout/AppShell";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: 'Kelola Toko Pasarkita',
-  description: 'Kelola produk, stok, pesanan, dan keuangan toko Anda.',
+  title: {
+    default: "Kelola Toko Pasarkita",
+    template: "%s — Pasarkita",
+  },
+  description:
+    "Kelola pesanan, produk, stok, pelanggan, dan keuangan toko Anda.",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/icons/icon-192.png",
+    apple: "/icons/icon-192.png",
+  },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export const viewport: Viewport = {
+  themeColor: "#1E2F5C",
+  width: "device-width",
+  initialScale: 1,
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="id" className={inter.variable}>
-      <body>{children}</body>
+      <body>          <SessionProvider>
+            <AppShell>{children}</AppShell>
+          </SessionProvider>      </body>
     </html>
   );
 }

@@ -28,7 +28,7 @@ type UserRow = {
 function failed(request: Request) {
   // Satu pesan untuk email tidak ada maupun sandi salah — jangan bocorkan
   // email mana yang terdaftar.
-  return NextResponse.redirect(publicUrl(request, '/?gagal=1'), 303);
+  return NextResponse.redirect(publicUrl(request, '/login?gagal=1'), 303);
 }
 
 export async function POST(request: Request) {
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     console.error('[dashboard] gagal membaca pengguna:', error);
-    return NextResponse.redirect(publicUrl(request, '/?gagal=1'), 303);
+    return NextResponse.redirect(publicUrl(request, '/login?gagal=1'), 303);
   }
 
   if (row === null) return failed(request);
@@ -71,7 +71,14 @@ export async function POST(request: Request) {
     expiresAt: Date.now() + SESSION_TTL_SECONDS * 1000,
   });
 
-  const response = NextResponse.redirect(publicUrl(request, '/'), 303);
+  // Tujuan setelah masuk hanya boleh jalur di dalam aplikasi ini. Tanpa
+  // penyaringan, nilai `lanjut` dari form mengubah halaman masuk menjadi
+  // pengalih terbuka ke situs mana pun.
+  const requested = String(form.get('lanjut') ?? '/');
+  const target =
+    requested.startsWith('/') && !requested.startsWith('//') ? requested : '/';
+
+  const response = NextResponse.redirect(publicUrl(request, target), 303);
   response.headers.set(
     'Set-Cookie',
     serializeCookie(issue(session, readSecret()), {
