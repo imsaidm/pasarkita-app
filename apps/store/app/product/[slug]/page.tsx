@@ -8,10 +8,6 @@ import type { Metadata } from "next";
 
 // dynamicParams default true — produk yang tidak masuk daftar build-time
 // ini tetap bisa diakses on-demand, lihat catatan sama di category/[slug].
-export async function generateStaticParams() {
-  const products = await getAllProducts();
-  return products.map((p) => ({ slug: p.slug }));
-}
 
 export async function generateMetadata({
   params,
@@ -28,6 +24,10 @@ export async function generateMetadata({
  * (client component) — halaman ini sendiri tetap server component supaya
  * data produk/related products di-render di server.
  */
+// Katalog dan pesanan milik tenant, dan tenant baru diketahui saat
+// permintaan masuk. Tidak ada yang bisa di-prerender saat build.
+export const dynamic = "force-dynamic";
+
 export default async function ProductPage({
   params,
 }: {

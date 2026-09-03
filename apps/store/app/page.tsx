@@ -20,6 +20,10 @@ import { SectionHeading } from "@/components/layout/SectionHeading";
  * Data produk membaca Convex kalau sudah di-setup (lib/data/products.ts),
  * fallback ke mock kalau belum — lihat komentar header file itu.
  */
+// Halaman ini membaca data milik tenant, dan tenant baru diketahui saat
+// permintaan masuk. Tidak ada yang bisa di-prerender saat build.
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const [categories, featured, newArrivals, bestSellers] = await Promise.all([
     getAllCategories(),

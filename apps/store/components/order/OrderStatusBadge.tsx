@@ -1,4 +1,4 @@
-import { OrderStatus, ORDER_STATUS_LABEL } from "@/lib/data/orders";
+import { ORDER_STATUS_LABEL, type OrderStatus } from "@/lib/data/order-status";
 
 const STYLES: Record<OrderStatus, string> = {
   diproses: "bg-soft-sage text-deep-pine",

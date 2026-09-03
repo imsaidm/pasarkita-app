@@ -7,6 +7,10 @@ import { SearchEntry } from "@/components/layout/SearchEntry";
  * nama/kategori/deskripsi singkat (lib/data/products.ts#searchProducts).
  * TODO integrasi: ganti ke full-text search Convex begitu backend ada.
  */
+// Halaman ini membaca data milik tenant, dan tenant baru diketahui saat
+// permintaan masuk. Tidak ada yang bisa di-prerender saat build.
+export const dynamic = "force-dynamic";
+
 export default async function SearchPage({
   searchParams,
 }: {

@@ -17,6 +17,10 @@ export function generateStaticParams() {
  * §12 (varian koleksi kurasi, mis. "Baru Tiba"/"Terlaris"/"Sale") — beda
  * dari /category/[slug] yang berbasis kategori produk (Wanita/Pria/dst).
  */
+// Katalog dan pesanan milik tenant, dan tenant baru diketahui saat
+// permintaan masuk. Tidak ada yang bisa di-prerender saat build.
+export const dynamic = "force-dynamic";
+
 export default async function CollectionPage({
   params,
 }: {

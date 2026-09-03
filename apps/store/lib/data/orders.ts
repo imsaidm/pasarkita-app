@@ -7,7 +7,8 @@ import { resolveTenantId } from '@/lib/tenant/resolve';
  * sebelumnya supaya halaman tidak perlu diedit; isinya sekarang PostgreSQL.
  */
 
-export type OrderStatus = 'diproses' | 'dikirim' | 'selesai' | 'dibatalkan';
+export { ORDER_STATUS_LABEL, type OrderStatus } from './order-status';
+import type { OrderStatus } from './order-status';
 
 export interface OrderItem {
   productId: string;

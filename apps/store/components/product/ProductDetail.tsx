@@ -39,6 +39,7 @@ export function ProductDetail({ product }: { product: Product }) {
   function handleAddToCart() {
     addItem({
       productId: product.id,
+      skuId: product.skuId,
       variantId,
       name: product.name,
       variantLabel,

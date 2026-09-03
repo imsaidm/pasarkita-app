@@ -40,6 +40,10 @@ const SORT_OPTIONS = [
   { value: "harga-tertinggi", label: "Harga Tertinggi" },
 ];
 
+// Halaman ini membaca data milik tenant, dan tenant baru diketahui saat
+// permintaan masuk. Tidak ada yang bisa di-prerender saat build.
+export const dynamic = "force-dynamic";
+
 export default async function CategoryIndexPage({
   searchParams,
 }: {

@@ -5,16 +5,16 @@ import { Breadcrumb } from "@/components/layout/Breadcrumb";
 
 // dynamicParams default true — order id Convex sungguhan yang tidak masuk
 // daftar build-time ini tetap bisa diakses on-demand.
-export async function generateStaticParams() {
-  const orders = await getAllOrders();
-  return orders.map((o) => ({ id: o.id }));
-}
 
 /**
  * §23 Order Tracking — akses langsung via link (mis. dari email/WA
  * konfirmasi), beda dari /account/orders/[id] yang diakses via daftar
  * akun. Isinya sama (OrderDetail), datanya masih mock (lib/data/orders.ts).
  */
+// Katalog dan pesanan milik tenant, dan tenant baru diketahui saat
+// permintaan masuk. Tidak ada yang bisa di-prerender saat build.
+export const dynamic = "force-dynamic";
+
 export default async function OrderTrackingPage({
   params,
 }: {

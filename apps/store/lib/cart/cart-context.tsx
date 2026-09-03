@@ -31,6 +31,7 @@ import {
 
 export interface CartItem {
   productId: string;
+  skuId: string;
   variantId: string;
   name: string;
   variantLabel: string;
@@ -56,7 +57,7 @@ type CartAction =
     }
   | { type: "CLEAR" };
 
-const STORAGE_KEY = "karyalo.cart.v1";
+const STORAGE_KEY = "pk.cart.v1";
 
 function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {

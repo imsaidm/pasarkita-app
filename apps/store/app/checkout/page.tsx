@@ -3,8 +3,6 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import { useCart } from "@/lib/cart/cart-context";
 import { formatRupiah } from "@/lib/utils/currency";
 
@@ -30,15 +28,14 @@ import { formatRupiah } from "@/lib/utils/currency";
  * baca database untuk menampilkan ringkasan), bukan lagi satu-satunya
  * catatan order.
  *
- * Rules of Hooks: `useMutation` tidak boleh dipanggil kondisional, tapi
- * `ConvexClientProvider` hanya membungkus `<ConvexProvider>` kalau
- * `NEXT_PUBLIC_CONVEX_URL` terisi (nilainya tetap sama sepanjang sesi
- * browser). Makanya, sama seperti /wishlist, komponen dipecah dua —
- * `CheckoutPageConvex` (unconditionally memanggil `useMutation`) dan
- * `CheckoutPageMock` (tidak memanggilnya sama sekali) — dipilih sekali
- * lewat `CONVEX_CONFIGURED`, bukan lewat cabang di dalam satu komponen.
+ * Pesanan disimpan ke PostgreSQL lewat POST /api/order. Harga dihitung ulang
+ * di server dari basis data — angka di keranjang hanya untuk ditampilkan.
+ *
+ * Berbeda dari versi sebelumnya: kegagalan penyimpanan MENGHENTIKAN alur.
+ * Sebelumnya kegagalan hanya dicatat ke console lalu tetap lanjut ke halaman
+ * sukses — pembeli percaya pesanannya masuk padahal tidak ada yang tercatat.
+ * Itu kerugian nyata bagi pembeli dan penjual, bukan sekadar cacat tampilan.
  */
-const CONVEX_CONFIGURED = Boolean(process.env.NEXT_PUBLIC_CONVEX_URL);
 
 const SHIPPING_OPTIONS = [
   { id: "reguler", label: "Reguler (3-5 hari)", cost: 15000 },
@@ -47,25 +44,23 @@ const SHIPPING_OPTIONS = [
 
 const PAYMENT_OPTIONS = [
   { id: "transfer", label: "Transfer Bank" },
-  { id: "ewallet", label: "E-Wallet" },
+  { id: "qris", label: "QRIS" },
 ];
 
-type CreateOrderFn = ReturnType<typeof useMutation<typeof api.orders.create>>;
+/** Kunci tetap per usaha checkout, supaya klik ganda tidak jadi dua pesanan. */
+function newIdempotencyKey(): string {
+  try {
+    return crypto.randomUUID();
+  } catch {
+    return `pk-${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
+  }
+}
 
 export default function CheckoutPage() {
-  return CONVEX_CONFIGURED ? <CheckoutPageConvex /> : <CheckoutPageMock />;
+  return <CheckoutForm />;
 }
 
-function CheckoutPageConvex() {
-  const createOrder = useMutation(api.orders.create);
-  return <CheckoutForm createOrder={createOrder} />;
-}
-
-function CheckoutPageMock() {
-  return <CheckoutForm createOrder={null} />;
-}
-
-function CheckoutForm({ createOrder }: { createOrder: CreateOrderFn | null }) {
+function CheckoutForm() {
   const { items, hydrated, clear } = useCart();
   const router = useRouter();
 
@@ -100,68 +95,72 @@ function CheckoutForm({ createOrder }: { createOrder: CreateOrderFn | null }) {
     if (!validate()) return;
     setSubmitting(true);
 
-    const orderNumber = `KRY-${Date.now().toString().slice(-8)}`;
     const shippingLabel = SHIPPING_OPTIONS.find((o) => o.id === shipping)?.label ?? "";
     const paymentLabel = PAYMENT_OPTIONS.find((o) => o.id === payment)?.label ?? "";
     const address = [form.address, form.city, form.postalCode].filter(Boolean).join(", ");
 
     try {
-      window.sessionStorage.setItem(
-        "karyalo.lastOrder",
-        JSON.stringify({
-          orderNumber,
-          items,
-          subtotal,
-          shippingCost,
-          total,
-          shippingLabel,
-          paymentLabel,
+      const response = await fetch("/api/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          idempotencyKey: newIdempotencyKey(),
+          lines: items.map((i) => ({ skuId: i.skuId, qty: i.quantity })),
           recipientName: form.name,
-        })
-      );
-    } catch {
-      // sessionStorage tidak tersedia — success page tetap tampil generik.
-    }
-
-    // Order store otoritatif SUNGGUHAN + pemicu push notification admin
-    // Manage (lihat convex/orders.ts `create` + convex/notificationActions.ts).
-    // Kegagalan di sini SENGAJA tidak menghentikan alur checkout (order
-    // simulasi tetap "berhasil" di UI) — konsisten dengan pola fallback
-    // read-only di lib/data/*.ts (safeConvex), supaya prototype tetap bisa
-    // di-demo walau backend bermasalah/URL kosong. Dicetak sebagai warning
-    // console, bukan silent.
-    if (createOrder) {
-      try {
-        await createOrder({
-          orderNumber,
-          items: items.map((i) => ({
-            productId: i.productId,
-            name: i.name,
-            variantLabel: i.variantLabel,
-            unitPrice: i.unitPrice,
-            quantity: i.quantity,
-            imageUrl: i.imageUrl,
-          })),
-          subtotal,
-          shippingCost,
-          total,
-          shippingLabel,
-          paymentLabel,
-          recipientName: form.name,
+          recipientPhone: form.phone,
           address,
-        });
-      } catch (err) {
-        console.warn(
-          "[Karyalo] Gagal menyimpan order ke Convex — order TIDAK tercatat di backend dan " +
-            "push notification admin TIDAK terkirim untuk order ini, tapi UI checkout tetap " +
-            "lanjut ke halaman sukses (simulasi). Detail:",
-          err
-        );
-      }
-    }
+          shippingLabel,
+          shippingCents: shippingCost * 100,
+          paymentMethod: payment === "qris" ? "qris" : "transfer",
+        }),
+      });
 
-    clear();
-    router.push("/checkout/success");
+      const result = (await response.json()) as {
+        ok?: boolean;
+        orderId?: string;
+        error?: string;
+      };
+
+      if (!response.ok || !result.ok || !result.orderId) {
+        setErrors({
+          submit:
+            result.error ??
+            "Pesanan gagal disimpan. Belum ada yang tercatat, silakan coba lagi.",
+        });
+        return;
+      }
+
+      // Ringkasan dititipkan supaya halaman sukses tidak perlu membaca ulang
+      // basis data. Ini murni serah-terima antar halaman, bukan catatan
+      // pesanan — catatan sungguhannya sudah tersimpan di server.
+      try {
+        window.sessionStorage.setItem(
+          "pk.lastOrder",
+          JSON.stringify({
+            orderId: result.orderId,
+            items,
+            subtotal,
+            shippingCost,
+            total,
+            shippingLabel,
+            paymentLabel,
+            recipientName: form.name,
+          })
+        );
+      } catch {
+        // Penyimpanan sesi ditolak browser. Halaman sukses tampil generik.
+      }
+
+      clear();
+      router.push("/checkout/success");
+    } catch {
+      setErrors({
+        submit:
+          "Tidak bisa menghubungi server. Pesanan belum tercatat — periksa koneksi lalu coba lagi.",
+      });
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (!hydrated) {

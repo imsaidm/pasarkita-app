@@ -9,10 +9,10 @@ import { Breadcrumb } from "@/components/layout/Breadcrumb";
  * masuk daftar di bawah (mis. ditambah langsung di Convex tanpa rebuild)
  * tetap bisa diakses on-demand, bukan 404 — daftar ini cuma hint build-time.
  */
-export async function generateStaticParams() {
-  const categories = await getAllCategories();
-  return categories.map((c) => ({ slug: c.slug }));
-}
+
+// Katalog dan pesanan milik tenant, dan tenant baru diketahui saat
+// permintaan masuk. Tidak ada yang bisa di-prerender saat build.
+export const dynamic = "force-dynamic";
 
 export default async function CategoryPage({
   params,

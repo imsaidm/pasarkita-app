@@ -21,6 +21,10 @@ export function generateStaticParams() {
   return Object.keys(PROMOS).map((slug) => ({ slug }));
 }
 
+// Katalog dan pesanan milik tenant, dan tenant baru diketahui saat
+// permintaan masuk. Tidak ada yang bisa di-prerender saat build.
+export const dynamic = "force-dynamic";
+
 export default async function PromoDetailPage({
   params,
 }: {
