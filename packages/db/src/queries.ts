@@ -16,6 +16,7 @@ export type CatalogItem = {
   readonly priceCents: number;
   readonly unit: string;
   readonly stock: number;
+  readonly images: readonly string[];
 };
 
 export async function loadTenantPlan(tenantId: string): Promise<Plan | null> {
@@ -46,10 +47,16 @@ export async function listCatalog(
     price_cents: string;
     unit: string;
     stock: string | null;
+    images: string[] | null;
   }>(
+    // Foto lewat subkueri, bukan join: menggabungkannya ke agregat stok akan
+    // melipatgandakan angka stok sebanyak jumlah fotonya.
     `SELECT s.id AS sku_id, s.code, p.name, p.category,
             s.price_cents::text, s.unit,
-            coalesce(SUM(l.delta), 0)::text AS stock
+            coalesce(SUM(l.delta), 0)::text AS stock,
+            (SELECT array_agg(pi.url ORDER BY pi.sort, pi.id)
+               FROM product_image pi
+              WHERE pi.product_id = p.id AND pi.tenant_id = p.tenant_id) AS images
      FROM sku s
      JOIN variant v ON v.id = s.variant_id
      JOIN product p ON p.id = v.product_id
@@ -58,7 +65,7 @@ export async function listCatalog(
       AND l.tenant_id = s.tenant_id
       AND ($2::text IS NULL OR l.outlet_id = $2)
      WHERE s.tenant_id = $1
-     GROUP BY s.id, s.code, p.name, p.category, s.price_cents, s.unit
+     GROUP BY s.id, s.code, p.id, p.name, p.category, s.price_cents, s.unit
      ORDER BY p.category NULLS LAST, p.name`,
     [tenantId, outletId ?? null],
   );
@@ -72,6 +79,7 @@ export async function listCatalog(
       priceCents: Number(row.price_cents),
       unit: row.unit,
       stock: Number(row.stock ?? 0),
+      images: row.images ?? [],
     }),
   );
 }
