@@ -86,16 +86,29 @@ export default async function LoginPage({
           </button>
         </form>
 
-        <p className="mt-5 text-center text-xs text-muted">
-          Belum punya akun? Coba dulu tanpa daftar di{" "}
-          <a href="https://pos.pasarkita.net" className="font-medium text-karyalo-green">
-            kasir
-          </a>{" "}
-          atau{" "}
+        <div className="mt-5 flex items-center gap-3">
+          <span className="h-px flex-1 bg-border" />
+          <span className="text-[11px] font-medium uppercase tracking-wider text-muted">
+            atau
+          </span>
+          <span className="h-px flex-1 bg-border" />
+        </div>
+
+        <form method="post" action="/api/demo" className="mt-4">
+          <button
+            type="submit"
+            className="tap-target w-full rounded-full border border-karyalo-green px-5 py-2.5 text-sm font-semibold text-karyalo-green hover:bg-soft-sage"
+          >
+            Lihat demo tanpa akun
+          </button>
+        </form>
+
+        <p className="mt-3 text-center text-xs text-muted">
+          Demo memakai toko contoh berisi data palsu. Pesanan yang dibuat di{" "}
           <a href="https://store.pasarkita.net" className="font-medium text-karyalo-green">
-            toko online
-          </a>
-          .
+            demo toko online
+          </a>{" "}
+          akan muncul di sini.
         </p>
       </div>
     </div>
